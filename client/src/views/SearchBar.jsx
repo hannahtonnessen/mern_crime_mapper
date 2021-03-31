@@ -13,6 +13,13 @@ const SearchBar = (props) => {
         // console.log(res)
         .catch(err=>console.log(err))
     }
+
+    const processCrime = (crime) => {
+        for (const i=0; i<crime.length; i++){
+            lat[i] = crime[i].location.latitude;
+            lon[i] = crime[i].location.longitude;
+        }
+    }
     //send crime data to App.js. Pass crime data down to GoogleMap where latitude and longitude
     //are targeted. Create 
 
