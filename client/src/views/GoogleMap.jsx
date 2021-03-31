@@ -29,7 +29,7 @@ const GoogleMap = ({ placeName, crime, setCrime }) => {
   const SpecificCrime = (e) => {
     e.preventDefault();
     //make a post request to create a new person
-    axios.get("https://data.readingpa.gov/resource/yugu-edth.json?$$app_token=kZZLRMmGCpp3bQDgoaaTKxoO1")
+    axios.get("https://data.readingpa.gov/resource/yugu-edth.json")
     .then(res => setCrime(res.data))
     // console.log(res)
     .catch(err=>console.log(err))
