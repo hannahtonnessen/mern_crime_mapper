@@ -1,6 +1,6 @@
 import React, {useRef, useEffect} from 'react';
 
-const GoogleMap = ({ placeName }) => {
+const GoogleMap = ({ placeName, crime }) => {
   console.log('test')
   const googleMapRef = useRef();
   let googleMap;
@@ -34,12 +34,16 @@ const GoogleMap = ({ placeName }) => {
           createGoogleMap(results[0].geometry.location);
           lat = results[0].geometry.location.lat();
           lng = results[0].geometry.location.lng();
-          new window.google.maps.Marker({
-            position: { lat, lng },
-            map: googleMap,
-            animation: window.google.maps.Animation.DROP,
-            title: `${placeName}`,
-          });
+          for (const i=0; i<crime.length; i++){
+            lat = crime[i].location.latitude;
+            lng = crime[i].location.longitude;
+        
+            new window.google.maps.Marker({
+              position: { lat, lng },
+              map: googleMap,
+              animation: window.google.maps.Animation.DROP,
+              title: `${placeName}`,
+            });}
         } else {
           alert(
             "Geocode was not successful for the following reason: " + status
