@@ -6,8 +6,8 @@ function App() {
   const[crime, setCrime] = useState('');
   return (
     <div className="App" >
-      <SearchBar crime={crime} setCrime={setCrime}/>
-      <GoogleMap placeName={'Reading'}/>
+      <SearchBar />
+      <GoogleMap placeName={'Reading'} crime={crime} setCrime={setCrime}/>
       
     </div>
   );

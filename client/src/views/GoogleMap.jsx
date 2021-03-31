@@ -1,6 +1,7 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useState} from 'react';
+import axios from 'axios';
 
-const GoogleMap = ({ placeName }) => {
+const GoogleMap = ({ placeName, crime, setCrime }) => {
   console.log('test')
   const googleMapRef = useRef();
   let googleMap;
@@ -24,6 +25,24 @@ const GoogleMap = ({ placeName }) => {
       //disableDefaultUI: true,
     });
   };
+
+  const SpecificCrime = (e) => {
+    e.preventDefault();
+    //make a post request to create a new person
+    axios.get("https://data.readingpa.gov/resource/yugu-edth.json?$$app_token=kZZLRMmGCpp3bQDgoaaTKxoO1")
+    .then(res => setCrime(res.data))
+    // console.log(res)
+    .catch(err=>console.log(err))
+}
+
+const processCrime = (crime) => {
+    var lat = 0;
+    var lon = 0;
+    for (const i=0; i<crime.length; i++){
+        lat[i] = crime[i].location.latitude;
+        lon[i] = crime[i].location.longitude;
+    }
+}
   const getLatLng = () => {
     let lat, lng, placeId;
     new window.google.maps.Geocoder().geocode(
@@ -49,11 +68,17 @@ const GoogleMap = ({ placeName }) => {
     );
   };
   return (
-    <div
-      id="google-map"
-      ref={googleMapRef}
-      style={{ width: "400px", height: "300px" }}
-    />
+    <div>
+      <form onSubmit = {SpecificCrime}>
+                <input type="text" onChange={(e)=>setCrime(e.target.value)}/>
+                <input type="submit"/>
+            </form>
+      <div
+        id="google-map"
+        ref={googleMapRef}
+        style={{ width: "900px", height: "600px" }}
+      />
+    </div>
   );
 };
 
