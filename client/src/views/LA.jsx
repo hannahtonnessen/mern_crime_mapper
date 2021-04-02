@@ -1,8 +1,8 @@
 import React, {useRef, useEffect, useState} from 'react';
 import axios from 'axios';
 import Radium from 'radium';
-import GoogleMapReact from 'google-map-react';
 import { Link  } from '@reach/router';
+import GoogleMapReact from 'google-map-react';
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
 const google = window.google;
 let googleMap;
@@ -24,8 +24,8 @@ const GoogleMap = ({ placeName }) => {
   const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
   const [position, setPosition] = useState([]);
-  const [iconV, setIconV] = useState(1);
   const [errorMessage, setErrorMessage] = useState('');
+  const [iconV, setIconV] = useState(1);
   const createGoogleMap = (coordinates) => {
     // for (const i=0; i<crime.length; i++){
     //   let lat = 0;
@@ -33,7 +33,7 @@ const GoogleMap = ({ placeName }) => {
       // lat = crime[i].location.latitude;
       // lng = crime[i].location.longitude;
       googleMap = new window.google.maps.Map(googleMapRef.current, {
-        zoom: 13,
+        zoom: 15,
         center: {
           lat: coordinates.lat(),
           lng: coordinates.lng(),
@@ -45,9 +45,14 @@ const GoogleMap = ({ placeName }) => {
   const createMarker = (markerObj) => new window.google.maps.Marker({
     position: { lat : parseFloat(markerObj.lat), lng : parseFloat(markerObj.lng) },
     map: googleMap,
+    zoom: 15,
     label: {
       text: markerObj.title,
       fontSize: "10px",
+      style: {
+        color: "grey"
+      }
+      
   },
     icon: {
       url: markerObj.icon,
@@ -56,35 +61,14 @@ const GoogleMap = ({ placeName }) => {
     }
   });
 
-  // var ui = H.ui.UI.createDefault(googleMap, defaultLayers);
-  // markerList.addEventListener('tap', function (iconList) {
-  //   // event target is the marker itself, group is a parent event target
-  //   // for all objects that it contains
-  //   var bubble =  new H.ui.InfoBubble(iconList.icon1, {
-  //     // read custom data
-  //     content: iconList.icon1 //info from crime 
-  //   });
-  //   // show info bubble
-  //   ui.addBubble(bubble);
-  // }, false);
- 
-
   const SpecificCrime = (e) => {
     e.preventDefault();
     console.log('in specific crime function')
-    axios.get(`https://data.readingpa.gov/resource/yugu-edth.json?cm_legend=${crimeSearch}&$limit=10`)
+    axios.get(` https://data.lacity.org/resource/2nrs-mtv8.json?crm_cd_desc=${crimeSearch}&$limit=10`)
     .then(res => {
-      console.log(res)
-
-      if(res.data.length === 0){
-        console.log("unable to locate")
-        setErrorMessage("Unable to locate.")
-      }
-      else{
-        setErrorMessage("")
-        setCrime(res.data); 
-        processCrime(res.data);
-      }
+  
+      setCrime(res.data); 
+      processCrime(res.data);
       console.log('in the specific crime function',crime);
       
     })
@@ -99,23 +83,25 @@ const GoogleMap = ({ placeName }) => {
     icon4: 'https://cdn2.iconfinder.com/data/icons/IconsLandVistaMapMarkersIconsDemo/256/MapMarker_Marker_Outside_Chartreuse.png',
     icon5: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/256/Map-Marker-Marker-Outside-Orange.png'
   }
+  // const icons = (iconList) => {
 
-  const [markerList, setMarkerList] = useState ([{ lat: 40.3459221, lng: -75.92488847, icon: iconList.icon1 }]);
+  //   for(let i = 0; i < iconList.length){
+      
+  //   }
+  // }
+  const [markerList, setMarkerList] = useState ([{ lat: 34.0433, lng: -118.2377, icon: iconList.icon1 }]);
   
+
   const processCrime = (crime) => {
     const copy = [...markerList]
     for (let incident of crime){
-      // if(parseFloat(incident.location.latitude) > 40 && parseFloat(incident.location.longitude) < -76){
-      //   var lat = incident.location.latitude;
-      //   var lng = incident.location.longitude;
-      // }
-      var lat = incident.location.latitude;
-      var lng = incident.location.longitude;
+      var lat = incident.lat;
+      var lng = incident.lon;
       // console.log(lat)
-      // console.log(lng);
+      console.log(lng);
       console.log('this is copy' + copy);
-      var titleV = incident.offns_desc;
-      var descriptionV = incident.block_add;
+      var titleV = incident.premis_desc;
+      var descriptionV = incident.location;
       var currentIcon = `icon${iconV}`
       copy.push({lat: parseFloat(lat), lng: parseFloat(lng), title: titleV, description: descriptionV, icon: iconList[currentIcon]})
       iconV<4? setIconV(iconV+1) : setIconV(1);
@@ -128,7 +114,7 @@ const GoogleMap = ({ placeName }) => {
     
     var bounds = new window.google.maps.LatLngBounds();
     copy.map(x => { //SetMarkerList does not get created right away
-      console.log(x);
+      console.log(x, "X");
 
       const marker = createMarker(x);
       console.log(marker);
@@ -138,7 +124,6 @@ const GoogleMap = ({ placeName }) => {
     
     
   }
-
   // const processCrime = (crime) => {
   //   for (let incident of crime){
   //     console.log(crime[0]);
@@ -173,7 +158,7 @@ const GoogleMap = ({ placeName }) => {
           new window.google.maps.Marker({
             position: { lat, lng },
             map: googleMap,
-            //animation: window.google.maps.Animation.DROP,
+            animation: window.google.maps.Animation.DROP,
             title: `${placeName}`
           });
         } else {
@@ -185,38 +170,37 @@ const GoogleMap = ({ placeName }) => {
     );
   };
   return (
-    <div >
+    <div>
       <p style ={{color : "red", marginLeft : "500px"}}>{errorMessage}</p>
       <div style = {{display : "flex", marginTop : "10px"}}>
-        <Link to="/LA">
-          <button style ={{width : "90px", 
-            height: "45px", borderRadius: "2px", 
-            color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
-            margin : "5px"}}> 
-                    <p>Los Angeles</p>
-          </button>
-        </Link>
-        <Link to="/Reading">
-          <button style ={{width : "90px", 
-            height: "45px", borderRadius: "2px", 
-            color : "white", 
-            backgroundImage : 'linear-gradient(315deg, #29323c 0%, #485563 74%)', 
-            //backgroundColor : "#485461", 
-            margin : "5px"
-            }}>
-            Reading
-          </button>
-        </Link>
-        <Link to="/" >
+        <Link to="/LA" >
             <button style ={{width : "90px", 
-          height: "45px", borderRadius: "2px", 
-          color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
-          margin : "5px"
-          }}>
-              <span>San Francisco</span>
+          height: "45px", 
+          borderRadius: "2px", 
+          color : "white", backgroundImage : "linear-gradient(315deg, #29323c 0%, #485563 74%)", 
+          margin : "5px"}}>
+                    <p>Los Angeles</p>
             </button>
         </Link>
-        <Link to="/Seattle">
+          <Link to="/Reading" >
+              <button style ={{width : "90px", 
+            height: "45px", 
+            borderRadius: "2px", 
+            color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
+            margin : "5px"}}>
+                Reading
+              </button>
+          </Link>
+          <Link to="/">
+              <button style ={{width : "90px", 
+              height: "45px", 
+              borderRadius: "2px", 
+              color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
+              margin : "5px"}}>
+                  San Francisco
+                </button>
+          </Link>
+          <Link to="/Seattle">
             <button style ={{width : "90px", 
           height: "45px", borderRadius: "2px", 
           color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
@@ -225,13 +209,11 @@ const GoogleMap = ({ placeName }) => {
               Seattle
             </button>
         </Link>
-      <form onSubmit = {SpecificCrime} style ={{alignSelf : "center", marginLeft : "150px"}}>
-        <input type="search" placeholder= "crime type" onChange={e=>setCrimeSearch(e.target.value.toUpperCase())}/>
-        <input type="submit"/>
-      </form>
+        <form onSubmit = {SpecificCrime} style ={{alignSelf : "center", marginLeft : "150px"}}>
+          <input type="search" type="search" placeholder= "crime type" onChange={e=>setCrimeSearch(e.target.value.toUpperCase())}/>
+          <input type="submit"/>
+        </form>
       </div>
-    <div>
-    </div>
       <div
         id="google-map"
         ref={googleMapRef}
