@@ -4,6 +4,13 @@ import Radium from 'radium';
 import { Link  } from '@reach/router';
 import GoogleMapReact from 'google-map-react';
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
+import {
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Button
+} from "@material-ui/core";
 const google = window.google;
 let googleMap;
 
@@ -19,19 +26,20 @@ const GoogleMap = ({ placeName }) => {
     googleMapScript.addEventListener("load", () => {
       googleMap = getLatLng();
     });
+    AllCrimeData();
   }, []);
 
   const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
   const [position, setPosition] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const [allCrimeData, setAllCrimeData] = useState('');
+  const [allCrimeNames, setAllCrimeNames] = useState([]);
+  const [newAllCrimeNames, setNewAllCrimeNames] = useState([]);
+  const [ menuCrimes, setMenuCrimes] = useState([]);
   const [iconV, setIconV] = useState(1);
   const createGoogleMap = (coordinates) => {
-    // for (const i=0; i<crime.length; i++){
-    //   let lat = 0;
-    //   let lng = 0;
-      // lat = crime[i].location.latitude;
-      // lng = crime[i].location.longitude;
+
       googleMap = new window.google.maps.Map(googleMapRef.current, {
         zoom: 15,
         center: {
@@ -61,6 +69,30 @@ const GoogleMap = ({ placeName }) => {
     }
   });
 
+const CreateCrimeNamesArray = (response) => { 
+  console.log("in all crime data");
+      for(var i = 0; i < 1000; i++){
+        if(allCrimeNames.includes(response.data[i].crm_cd_desc) ){
+        }
+        else{
+          setAllCrimeNames(allCrimeNames.push(response.data[i].crm_cd_desc));
+        }
+      setMenuCrimes(Object.values(allCrimeNames))
+      }
+}
+
+  const AllCrimeData = () => { //creates array containing all crime names
+    axios.get("https://data.lacity.org/resource/2nrs-mtv8.json?")
+  .then(response => { 
+    CreateCrimeNamesArray(response);
+    console.log(allCrimeNames);
+  })
+  .catch(err=>console.log(err))
+} 
+  
+
+
+
   const SpecificCrime = (e) => {
     e.preventDefault();
     console.log('in specific crime function')
@@ -83,12 +115,7 @@ const GoogleMap = ({ placeName }) => {
     icon4: 'https://cdn2.iconfinder.com/data/icons/IconsLandVistaMapMarkersIconsDemo/256/MapMarker_Marker_Outside_Chartreuse.png',
     icon5: 'https://cdn1.iconfinder.com/data/icons/Map-Markers-Icons-Demo-PNG/256/Map-Marker-Marker-Outside-Orange.png'
   }
-  // const icons = (iconList) => {
 
-  //   for(let i = 0; i < iconList.length){
-      
-  //   }
-  // }
   const [markerList, setMarkerList] = useState ([{ lat: 34.0433, lng: -118.2377, icon: iconList.icon1 }]);
   
 
@@ -107,8 +134,6 @@ const GoogleMap = ({ placeName }) => {
       iconV<4? setIconV(iconV+1) : setIconV(1);
     }
 
-    // for(let icon of iconList){
-    // }
 
     setMarkerList(copy);
     
@@ -124,25 +149,6 @@ const GoogleMap = ({ placeName }) => {
     
     
   }
-  // const processCrime = (crime) => {
-  //   for (let incident of crime){
-  //     console.log(crime[0]);
-  //     console.log("**************");
-  //     var lat = incident.location.latitude;
-  //     var lng = incident.location.longitude;
-  //     console.log(lng + "lng");
-  //     console.log(lat + 'lat');
-  //     setPosition(new window.google.maps.LatLng(incident.location.latitude,incident.location.longitude));
-  //     const myLatLng = { lat: parseFloat(incident.location.latitude), lng: parseFloat(incident.location.longitude) };
-  //     console.log(myLatLng)
-  //     new google.maps.Marker({
-  //       position: new google.maps.LatLng(incident.location.latitude,incident.location.longitude),
-  //       map: googleMap,
-  //       animation: google.maps.Animation.DROP,
-  //       title: `${incident.cm_legend}`
-  //     });
-  //   }
-  // }
 
   const getLatLng = () => {
     let lat, lng, placeId;
@@ -209,9 +215,28 @@ const GoogleMap = ({ placeName }) => {
               Seattle
             </button>
         </Link>
-        <form onSubmit = {SpecificCrime} style ={{alignSelf : "center", marginLeft : "150px"}}>
-          <input type="search" type="search" placeholder= "crime type" onChange={e=>setCrimeSearch(e.target.value.toUpperCase())}/>
-          <input type="submit"/>
+      <form onSubmit={SpecificCrime} >
+          <FormControl variant='filled'> 
+            <InputLabel id="label">Crime Type</InputLabel>
+            <Select labelId="label" id="select" 
+            value={crimeSearch}
+            onChange={(e) => setCrimeSearch(e.target.value)}>
+
+              <MenuItem value=""></MenuItem>
+
+              {menuCrimes.map((crimeName, i) => (
+                <MenuItem key={i} value={crimeName}>
+                  {crimeName}
+                </MenuItem>
+              ))}
+              </Select>
+              <Button
+              variant='outline-dark'
+              color='primary'
+              type='submit'>
+              Submit
+            </Button>
+          </FormControl>
         </form>
       </div>
       <div
