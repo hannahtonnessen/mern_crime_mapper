@@ -32,18 +32,10 @@ const GoogleMap = ({ placeName }) => {
   const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
   const [allCrimeNames, setAllCrimeNames] = useState([]);
-  const [allCrimeData, setAllCrimeData] = useState('');
-  const [newAllCrimeNames, setNewAllCrimeNames] = useState([]);
-  const [position, setPosition] = useState([]);
   const [ menuCrimes, setMenuCrimes] = useState([]);
   const [iconV, setIconV] = useState(1);
   const [errorMessage, setErrorMessage] = useState('');
   const createGoogleMap = (coordinates) => {
-    // for (const i=0; i<crime.length; i++){
-    //   let lat = 0;
-    //   let lng = 0;
-      // lat = crime[i].location.latitude;
-      // lng = crime[i].location.longitude;
       googleMap = new window.google.maps.Map(googleMapRef.current, {
         zoom: 15,
         center: {
@@ -100,7 +92,6 @@ const CreateCrimeNamesArray = (response) => {
     console.log('in specific crime function')
     axios.get(` https://data.seattle.gov/resource/tazs-3rd5.json?offense=${crimeSearch}&$limit=10`)
     .then(res => {
-  
       setCrime(res.data); 
       processCrime(res.data);
       console.log('in the specific crime function',crime);

@@ -31,11 +31,7 @@ const GoogleMap = ({ placeName }) => {
 
   const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
-  const [position, setPosition] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [allCrimeData, setAllCrimeData] = useState('');
   const [allCrimeNames, setAllCrimeNames] = useState([]);
-  const [newAllCrimeNames, setNewAllCrimeNames] = useState([]);
   const [ menuCrimes, setMenuCrimes] = useState([]);
   const [iconV, setIconV] = useState(1);
   const createGoogleMap = (coordinates) => {
@@ -98,7 +94,6 @@ const CreateCrimeNamesArray = (response) => {
     console.log('in specific crime function')
     axios.get(` https://data.lacity.org/resource/2nrs-mtv8.json?crm_cd_desc=${crimeSearch}&$limit=10`)
     .then(res => {
-  
       setCrime(res.data); 
       processCrime(res.data);
       console.log('in the specific crime function',crime);
@@ -177,7 +172,6 @@ const CreateCrimeNamesArray = (response) => {
   };
   return (
     <div>
-      <p style ={{color : "red", marginLeft : "500px"}}>{errorMessage}</p>
       <div style = {{display : "flex", marginTop : "10px"}}>
         <Link to="/LA" >
             <button style ={{width : "90px", 

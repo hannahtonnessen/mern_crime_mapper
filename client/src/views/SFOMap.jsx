@@ -31,13 +31,9 @@ const GoogleMap = ({ placeName }) => {
     AllCrimeData();
   }, []);
 
-  const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
-  const [position, setPosition] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
-  const [allCrimeData, setAllCrimeData] = useState('');
   const [allCrimeNames, setAllCrimeNames] = useState([]);
-  const [newAllCrimeNames, setNewAllCrimeNames] = useState([]);
   const [ menuCrimes, setMenuCrimes] = useState([]);
   const [iconV, setIconV] = useState(1);
   const createGoogleMap = (coordinates) => {
@@ -113,8 +109,7 @@ const CreateCrimeNamesArray = (response) => {
         setErrorMessage("Unable to locate.")
       }
       else{
-        setErrorMessage("")
-        setCrime(res.data); 
+        setErrorMessage("");
         processCrime(res.data);
       }
       
@@ -204,7 +199,8 @@ const CreateCrimeNamesArray = (response) => {
   };
   return (
     <div>
-      <p style ={{color : "red", marginLeft : "500px"}}>{errorMessage}</p>
+      <p style ={{color : "red", marginLeft : "500px"}}>{errorMessage}</p> 
+      {/* example of how to include error message  */}
       <div style ={{display : "flex", marginTop : "10px"}}>
       <Link to="/LA">
           <button style ={{width : "90px", 

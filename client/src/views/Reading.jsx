@@ -31,13 +31,9 @@ const Reading = ({ placeName }) => {
 
   const [crime, setCrime] = useState([]);
   const [crimeSearch, setCrimeSearch] = useState("");
-  const [position, setPosition] = useState([]);
   const [iconV, setIconV] = useState(1);
-  const [allCrimeData, setAllCrimeData] = useState('');
   const [allCrimeNames, setAllCrimeNames] = useState([]);
-  const [newAllCrimeNames, setNewAllCrimeNames] = useState([]);
   const [ menuCrimes, setMenuCrimes] = useState([]);
-  const [errorMessage, setErrorMessage] = useState('');
   const createGoogleMap = (coordinates) => {
     // for (const i=0; i<crime.length; i++){
     //   let lat = 0;
@@ -95,17 +91,8 @@ const CreateCrimeNamesArray = (response) => {
     console.log('in specific crime function')
     axios.get(`https://data.readingpa.gov/resource/yugu-edth.json?cm_legend=${crimeSearch}&$limit=10`)
     .then(res => {
-      console.log(res)
-
-      if(res.data.length === 0){
-        console.log("unable to locate")
-        setErrorMessage("Unable to locate.")
-      }
-      else{
-        setErrorMessage("")
-        setCrime(res.data); 
-        processCrime(res.data);
-      }
+      setCrime(res.data); 
+      processCrime(res.data);
       console.log('in the specific crime function',crime);
       
     })
@@ -186,8 +173,7 @@ const CreateCrimeNamesArray = (response) => {
     );
   };
   return (
-    <div >
-      <p style ={{color : "red", marginLeft : "500px"}}>{errorMessage}</p>
+    <div>
       <div style = {{display : "flex", marginTop : "10px"}}>
         <Link to="/LA">
           <button style ={{width : "90px", 
