@@ -45,7 +45,7 @@ const Reading = ({ placeName }) => {
       backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)",
       width : "100px", 
       height: "50px", 
-      borderRadius: "2px", 
+      borderRadius: "2px"
     },
     selectedButtonColor: {
       textTransform: 'capitalize',
