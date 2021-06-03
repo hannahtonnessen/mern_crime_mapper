@@ -1,8 +1,9 @@
 import React, {useRef, useEffect, useState} from 'react';
 import axios from 'axios';
 import Radium from 'radium';
-import { Link  } from '@reach/router';
-import GoogleMapReact from 'google-map-react';
+import { navigate  } from '@reach/router';
+// import GoogleMapReact from 'google-map-react';
+import { makeStyles } from '@material-ui/core/styles';
 import { Map, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
 import {
   Select,
@@ -14,7 +15,56 @@ import {
 const google = window.google;
 let googleMap;
 
-const GoogleMap = ({ placeName }) => {
+const LA = ({ placeName }) => {
+  const useStyles = makeStyles({
+    map : {
+      width: "100vw", 
+      height: "80vh", 
+      flexGrow: "1"
+    },
+    menuBar : {
+      display : "flex", 
+      justifyContent:"center", 
+      gap:"20px", 
+      paddingTop : "25px",
+      paddingBottom : "10px"
+    },
+    dropdownMenuBar : {
+      color : "red",
+      position : "relative",
+      // msTransform: "translateY(-50%)",
+      // transform: "translateY(-50%)",
+      minWidth : "150px",
+      //height : "10px",
+      //paddingBottom : "20px",
+      display : "flex",
+      justifyContent : "center"
+    },
+    standardButton: {
+      textTransform: 'capitalize',
+      fontSize:"1.0rem",
+      //flexGrow : "1",
+      color : "white",
+      lineHeight : "1",
+      backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)",
+      width : "100px", 
+      height: "50px", 
+      borderRadius: "2px", 
+    },
+    selectedButtonColor: {
+      textTransform: 'capitalize',
+      fontSize:"1.0rem",
+      //flexGrow : "1",
+      color : "white",
+      lineHeight : "1",
+      backgroundImage : "linear-gradient(315deg, #29323c 0%, #485563 74%)",
+      width : "100px", 
+      height: "50px", 
+      borderRadius: "2px"
+    }
+  })
+  const classes = useStyles();
+
   console.log('test')
   const googleMapRef = useRef();
   useEffect(() => {
@@ -33,6 +83,7 @@ const GoogleMap = ({ placeName }) => {
   const [crimeSearch, setCrimeSearch] = useState("");
   const [allCrimeNames, setAllCrimeNames] = useState([]);
   const [ menuCrimes, setMenuCrimes] = useState([]);
+  const [SelectedButton, setSelectedButton] = useState(0);
   const [iconV, setIconV] = useState(1);
   const createGoogleMap = (coordinates) => {
 
@@ -172,48 +223,20 @@ const CreateCrimeNamesArray = (response) => {
   };
   return (
     <div>
-      <div style = {{display : "flex", marginTop : "10px"}}>
-        <Link to="/LA" >
-            <button style ={{width : "90px", 
-          height: "45px", 
-          borderRadius: "2px", 
-          color : "white", backgroundImage : "linear-gradient(315deg, #29323c 0%, #485563 74%)", 
-          margin : "5px"}}>
-                    <p>Los Angeles</p>
-            </button>
-        </Link>
-          <Link to="/Reading" >
-              <button style ={{width : "90px", 
-            height: "45px", 
-            borderRadius: "2px", 
-            color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
-            margin : "5px"}}>
-                Reading
-              </button>
-          </Link>
-          <Link to="/">
-              <button style ={{width : "90px", 
-              height: "45px", 
-              borderRadius: "2px", 
-              color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
-              margin : "5px"}}>
-                  San Francisco
-                </button>
-          </Link>
-          <Link to="/Seattle">
-            <button style ={{width : "90px", 
-          height: "45px", borderRadius: "2px", 
-          color : "white", backgroundImage : "linear-gradient(to right top, #a2adbe, #8c9eb3, #7490a8, #5a829c, #3d7490)", 
-          margin : "5px"
-          }}>
-              Seattle
-            </button>
-        </Link>
+      <div className={classes.menuBar}>
+        <Button className={classes.selectedButtonColor} type="button" name="la" onClick={(e) => {navigate("/la"); setSelectedButton(0)}}>Los Angeles
+          </Button>
+          <Button className={classes.standardButton} type="button" name="reading" onClick={(e) => {navigate("/reading"); setSelectedButton(1)}}>Reading
+          </Button>
+          <Button className={classes.standardButton} type="button" name="san-francisco" onClick={(e) => {navigate("/"); setSelectedButton(2)}}>San Francisco 
+          </Button>
+          <Button className={classes.standardButton} type="button" name="seattle" onClick={(e) => {navigate("/seattle"); setSelectedButton(3)}}>Seattle
+          </Button>
       <form onSubmit={SpecificCrime} >
-          <FormControl variant='filled'> 
+          <FormControl variant="outlined" className={classes.dropdownMenuBar}> 
             <InputLabel id="label">Crime Type</InputLabel>
             <Select labelId="label" id="select" 
-            value={crimeSearch}
+            value={crimeSearch} 
             onChange={(e) => setCrimeSearch(e.target.value)}>
 
               <MenuItem value=""></MenuItem>
@@ -236,10 +259,10 @@ const CreateCrimeNamesArray = (response) => {
       <div
         id="google-map"
         ref={googleMapRef}
-        style={{ width: "750px", height: "600px" }}
+        className={classes.map}
       />
     </div>
   );
 };
 
-export default GoogleMap;
+export default LA;
